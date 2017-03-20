@@ -1,0 +1,25 @@
+{
+  "type": "logic",
+  "name": "或",
+  "children": [
+    {
+      "type": "logic",
+      "name": "且",
+      "children": [
+        { "type": "text", "name": "用户主动" },
+        { "type": "text", "name": "主动无效" },
+        { "type": "text", "name": "商家主动无效" },
+        { "type": "text", "name": "主动无效订单" }
+      ]
+    },
+    {
+      "type": "logic",
+      "name": "且",
+      "children": [
+        { "type": "text", "name": "用户主动" },
+        { "type": "text", "name": "主动无效" },
+        { "type": "text", "name": "商家主动无效" }
+      ]
+    }
+  ]
+}

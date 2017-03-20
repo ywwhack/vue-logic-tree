@@ -12,3 +12,19 @@ export function create (selector) {
 export function clone (obj) {
   return JSON.parse(JSON.stringify(obj))
 }
+
+export function merge (obj1, obj2) {
+  for (let prop in obj2) {
+    const value1 = obj1[prop]
+    const value2 = obj2[prop]
+    if (typeof value2 === 'object') {
+      if (typeof value1 === 'object') {
+        merge(obj1[prop], obj2[prop])
+      } else {
+        obj1[prop] = clone(obj2[prop])
+      }
+    } else {
+      obj1[prop] = obj2[prop]
+    }
+  }
+}

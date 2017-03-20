@@ -27,6 +27,13 @@ export default class Node {
     }
   }
 
+  styles (config) {
+    for (let key in config) {
+      this._node.style[key] = config[key]
+    }
+    return this
+  }
+
   text (value) {
     this._node.innerHTML = value
     return this

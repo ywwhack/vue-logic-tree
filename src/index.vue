@@ -4,8 +4,8 @@
 
 <script>
 import { tree, hierarchy } from 'd3-hierarchy'
-import { select, clone } from './util'
-import { NODE_TYPE, OPTION, MARGIN } from './constants'
+import { select, clone, merge } from './util'
+import { NODE_TYPE, DEFAULT_OPTION, MARGIN } from './constants'
 
 export default {
   name: 'logic-tree',
@@ -62,7 +62,8 @@ export default {
         container._node.innerHTML = ''
       }
 
-      const finalOption = Object.assign(clone(OPTION), clone(this.option))
+      let finalOption = clone(DEFAULT_OPTION)
+      merge(finalOption, this.option)
       // 设置每个节点的水平坐标
       nodes.forEach(d => {
         let y
@@ -83,27 +84,28 @@ export default {
         // 如果类型是 logic, 则画一个圆
         if (type === NODE_TYPE.logic) {
           treeNode.append('circle')
-            .attr('r', finalOption.circle.r)
-            .style('stroke', finalOption.circle.stroke)
             .style('fill', '#fff')
+            .styles(finalOption.logicCircle)
         }
 
         // 节点文字内容
-        treeNode.append('text')
+        const text = treeNode.append('text')
           .attr('x', type === NODE_TYPE.logic ? 0 : 10)
           .attr('dy', '.35em')
           .attr('text-anchor', type === NODE_TYPE.logic ? 'middle' : 'start')
-          .style('stroke', type === NODE_TYPE.logic ? finalOption.logicText.stroke : finalOption.ruleText.stroke)
-          .style('font-size', type === NODE_TYPE.logic ? finalOption.logicText.fontSize : finalOption.ruleText.fontSize)
-          .style('font-weight', 300)
           .text(name)
+        if (type === NODE_TYPE.logic) {
+          text.styles(finalOption.logicText)
+        } else {
+          text.styles(finalOption.ruleText)
+        }
       })
 
       // 相邻节点路径
       links.forEach(d => {
         container.insert('path', 'g')
           .style('fill', 'none')
-          .style('stroke', finalOption.link.stroke)
+          .styles(finalOption.link)
           .attr('d', `M${d.source.y},${d.source.x}L${d.source.y},${d.target.x} ${d.target.y},${d.target.x}`)
       })
     }

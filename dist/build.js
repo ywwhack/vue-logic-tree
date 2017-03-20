@@ -306,8 +306,11 @@ function squarifyRatio(ratio, parent, x0, y0, x1, y1) {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Node__ = __webpack_require__(13);
 /* harmony export (immutable) */ __webpack_exports__["a"] = select;
-/* harmony export (immutable) */ __webpack_exports__["c"] = create;
+/* harmony export (immutable) */ __webpack_exports__["d"] = create;
 /* harmony export (immutable) */ __webpack_exports__["b"] = clone;
+/* harmony export (immutable) */ __webpack_exports__["c"] = merge;
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 
 
 function select(selector) {
@@ -323,6 +326,22 @@ function create(selector) {
 
 function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
+}
+
+function merge(obj1, obj2) {
+  for (var prop in obj2) {
+    var value1 = obj1[prop];
+    var value2 = obj2[prop];
+    if ((typeof value2 === 'undefined' ? 'undefined' : _typeof(value2)) === 'object') {
+      if ((typeof value1 === 'undefined' ? 'undefined' : _typeof(value1)) === 'object') {
+        merge(obj1[prop], obj2[prop]);
+      } else {
+        obj1[prop] = clone(obj2[prop]);
+      }
+    } else {
+      obj1[prop] = obj2[prop];
+    }
+  }
 }
 
 /***/ }),
@@ -674,7 +693,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         container._node.innerHTML = '';
       }
 
-      var finalOption = Object.assign(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* clone */])(__WEBPACK_IMPORTED_MODULE_2__constants__["b" /* OPTION */]), __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* clone */])(this.option));
+      var finalOption = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* clone */])(__WEBPACK_IMPORTED_MODULE_2__constants__["b" /* DEFAULT_OPTION */]);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* merge */])(finalOption, this.option);
       // 设置每个节点的水平坐标
       nodes.forEach(function (d) {
         var y = void 0;
@@ -698,16 +718,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         // 如果类型是 logic, 则画一个圆
         if (type === __WEBPACK_IMPORTED_MODULE_2__constants__["c" /* NODE_TYPE */].logic) {
-          treeNode.append('circle').attr('r', finalOption.circle.r).style('stroke', finalOption.circle.stroke).style('fill', '#fff');
+          treeNode.append('circle').style('fill', '#fff').styles(finalOption.logicCircle);
         }
 
         // 节点文字内容
-        treeNode.append('text').attr('x', type === __WEBPACK_IMPORTED_MODULE_2__constants__["c" /* NODE_TYPE */].logic ? 0 : 10).attr('dy', '.35em').attr('text-anchor', type === __WEBPACK_IMPORTED_MODULE_2__constants__["c" /* NODE_TYPE */].logic ? 'middle' : 'start').style('stroke', type === __WEBPACK_IMPORTED_MODULE_2__constants__["c" /* NODE_TYPE */].logic ? finalOption.logicText.stroke : finalOption.ruleText.stroke).style('font-size', type === __WEBPACK_IMPORTED_MODULE_2__constants__["c" /* NODE_TYPE */].logic ? finalOption.logicText.font : finalOption.ruleText.font).style('font-weight', 300).text(name);
+        var text = treeNode.append('text').attr('x', type === __WEBPACK_IMPORTED_MODULE_2__constants__["c" /* NODE_TYPE */].logic ? 0 : 10).attr('dy', '.35em').attr('text-anchor', type === __WEBPACK_IMPORTED_MODULE_2__constants__["c" /* NODE_TYPE */].logic ? 'middle' : 'start').text(name);
+        if (type === __WEBPACK_IMPORTED_MODULE_2__constants__["c" /* NODE_TYPE */].logic) {
+          text.styles(finalOption.logicText);
+        } else {
+          text.styles(finalOption.ruleText);
+        }
       });
 
       // 相邻节点路径
       links.forEach(function (d) {
-        container.insert('path', 'g').style('fill', 'none').style('stroke', finalOption.link.stroke).attr('d', 'M' + d.source.y + ',' + d.source.x + 'L' + d.source.y + ',' + d.target.x + ' ' + d.target.y + ',' + d.target.x);
+        container.insert('path', 'g').style('fill', 'none').styles(finalOption.link).attr('d', 'M' + d.source.y + ',' + d.source.x + 'L' + d.source.y + ',' + d.target.x + ' ' + d.target.y + ',' + d.target.x);
       });
     }
   },
@@ -827,6 +852,14 @@ var Node = function () {
       }
     }
   }, {
+    key: 'styles',
+    value: function styles(config) {
+      for (var key in config) {
+        this._node.style[key] = config[key];
+      }
+      return this;
+    }
+  }, {
     key: 'text',
     value: function text(value) {
       this._node.innerHTML = value;
@@ -840,14 +873,14 @@ var Node = function () {
   }, {
     key: 'append',
     value: function append(selector) {
-      var _childNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["c" /* create */])(selector);
+      var _childNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["d" /* create */])(selector);
       this._node.appendChild(_childNode);
       return new Node(_childNode);
     }
   }, {
     key: 'insert',
     value: function insert(selector, _nodeBefore) {
-      var _insertedNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["c" /* create */])(selector);
+      var _insertedNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["d" /* create */])(selector);
       _nodeBefore = typeof _nodeBefore === 'string' ? this.select(_nodeBefore, this._node)._node : _nodeBefore;
       this._node.insertBefore(_insertedNode, _nodeBefore);
       return new Node(_insertedNode);
@@ -870,29 +903,25 @@ var Node = function () {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return NODE_TYPE; });
-/* unused harmony export COLORS */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return OPTION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return DEFAULT_OPTION; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MARGIN; });
 var NODE_TYPE = {
   logic: 'logic',
   text: 'text'
 };
-var COLORS = {
-  logic: '#20a0ff',
-  text: '#5e6d82',
-  link: '#c0c8d5'
-};
-var OPTION = {
-  circle: {
+var DEFAULT_OPTION = {
+  logicCircle: {
     r: 12,
     stroke: '#20a0ff'
   },
   logicText: {
-    font: 12,
+    'font-size': 12,
+    'font-weight': 300,
     stroke: '#20a0ff'
   },
   ruleText: {
-    font: 12,
+    'font-size': 12,
+    'font-weight': 300,
     stroke: '#5e6d82'
   },
   link: {

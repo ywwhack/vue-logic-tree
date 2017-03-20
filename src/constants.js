@@ -2,22 +2,19 @@ export const NODE_TYPE = {
   logic: 'logic',
   text: 'text'
 }
-export const COLORS = {
-  logic: '#20a0ff',
-  text: '#5e6d82',
-  link: '#c0c8d5'
-}
-export const OPTION = {
-    circle: {
+export const DEFAULT_OPTION = {
+    logicCircle: {
       r: 12,
       stroke: '#20a0ff'
     },
     logicText: {
-      fontSize: 12,
-      stroke: '#20a0ff'
+      'font-size': 12,
+      'font-weight': 300,
+      stroke: '#20a0ff',
     },
     ruleText: {
-      fontSize: 12,
+      'font-size': 12,
+      'font-weight': 300,
       stroke: '#5e6d82'
     },
     link: {
