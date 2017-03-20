@@ -4,8 +4,8 @@
 
 <script>
 import { tree, hierarchy } from 'd3-hierarchy'
-import { select } from './util'
-import { NODE_TYPE, COLORS, MARGIN } from './constants'
+import { select, clone } from './util'
+import { NODE_TYPE, OPTION, MARGIN } from './constants'
 
 export default {
   name: 'logic-tree',
@@ -22,6 +22,12 @@ export default {
     data: {
       type: Object,
       required: true
+    },
+    option: {
+      type: Object,
+      default () {
+        return {}
+      }
     }
   },
 
@@ -56,6 +62,7 @@ export default {
         container._node.innerHTML = ''
       }
 
+      const finalOption = Object.assign(clone(OPTION), clone(this.option))
       // 设置每个节点的水平坐标
       nodes.forEach(d => {
         let y
@@ -68,16 +75,16 @@ export default {
       })
 
       nodes.forEach((d, i) => {
-        const { data: { type, name } } = d
+        const { data: { type, name }, x, y } = d
 
         const treeNode = container.append('g')
-          .attr('class', 'rule-tree-node')
-          .attr('transform', `translate(${d.y}, ${d.x})`)
+          .attr('transform', `translate(${y}, ${x})`)
 
         // 如果类型是 logic, 则画一个圆
         if (type === NODE_TYPE.logic) {
           treeNode.append('circle')
-            .attr('r', 12)
+            .attr('r', finalOption.circle.r)
+            .style('stroke', finalOption.circle.stroke)
             .style('fill', '#fff')
         }
 
@@ -86,15 +93,18 @@ export default {
           .attr('x', type === NODE_TYPE.logic ? 0 : 10)
           .attr('dy', '.35em')
           .attr('text-anchor', type === NODE_TYPE.logic ? 'middle' : 'start')
-          .attr('stroke', type === NODE_TYPE.logic ? COLORS.logic : COLORS.text)
+          .style('stroke', type === NODE_TYPE.logic ? finalOption.logicText.stroke : finalOption.ruleText.stroke)
+          .style('font-size', type === NODE_TYPE.logic ? finalOption.logicText.fontSize : finalOption.ruleText.fontSize)
+          .style('font-weight', 300)
           .text(name)
       })
 
       // 相邻节点路径
       links.forEach(d => {
         container.insert('path', 'g')
-          .attr('class', 'rule-tree-link')
-          .attr('d', `M${d.source.y},${d.source.x}L${d.source.y}, ${d.target.x} ${d.target.y},${d.target.x}`)
+          .style('fill', 'none')
+          .style('stroke', finalOption.link.stroke)
+          .attr('d', `M${d.source.y},${d.source.x}L${d.source.y},${d.target.x} ${d.target.y},${d.target.x}`)
       })
     }
   },
@@ -104,19 +114,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.rule-tree-node circle {
-  fill: #fff;
-  stroke: #20a0ff;
-  stroke-width: 1px;
-}
-.rule-tree-node text {
-  font: 12px sans-serif;
-}
-.rule-tree-link {
-  fill: none;
-  stroke: #c0c8d5;;
-  stroke-width: 1px;
-}
-</style>

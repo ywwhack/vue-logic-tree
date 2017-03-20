@@ -8,3 +8,7 @@ export function select (selector, parent = document) {
 export function create (selector) {
   return document.createElementNS('http://www.w3.org/2000/svg', selector)
 }
+
+export function clone (obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
