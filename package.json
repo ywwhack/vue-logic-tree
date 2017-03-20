@@ -1,7 +1,7 @@
 {
   "name": "vue-logic-tree",
   "description": "基于vue的一个逻辑展示树组件",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "author": "ywwhack <yww7289@163.com>",
   "main": "./dist/build.js",
   "repository": "https://github.com/ywwhack/vue-logic-tree",
