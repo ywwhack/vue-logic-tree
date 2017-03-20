@@ -19,8 +19,14 @@ export default {
       logicCircle: {
         r: 9
       },
-      ruleText: {
+      logicText: {
         stroke: 'steelblue'
+      },
+      ruleText: {
+        'font-size': 14
+      },
+      link: {
+        'stroke-width': 2
       }
     }
   }
