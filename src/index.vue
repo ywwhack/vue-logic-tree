@@ -1,5 +1,5 @@
 <template>
-  <svg ref="canvas" class="rule-tree"></svg>
+  <svg ref="canvas"></svg>
 </template>
 
 <script>
