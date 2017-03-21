@@ -4,7 +4,7 @@
 
 <script>
 import { tree, hierarchy } from 'd3-hierarchy'
-import { select, clone, merge } from './util'
+import { select, clone, merge, traverse } from './util'
 import { DEFAULT_OPTION, MARGIN, LOGIC_TYPE } from './constants'
 import OPERATORS from './operators'
 
@@ -63,6 +63,17 @@ export default {
   methods: {
     update () {
       let { width, height, data, $refs: { canvas }, textFormatter } = this
+      let rulesCount = 0
+      let maxTextLength = 0
+      let index = 0
+      traverse(data, d => {
+        d.id = index++
+        if (!d.condition) {
+          rulesCount++
+          maxTextLength = Math.max(maxTextLength, textFormatter(d).length)
+        }
+      })
+
       width = parseInt(width) - MARGIN.left - MARGIN.right
       height = parseInt(height) - MARGIN.top - MARGIN.bottom
 
@@ -89,13 +100,20 @@ export default {
       merge(finalOption, this.option)
       // 设置每个节点的水平坐标
       nodes.forEach(d => {
-        let y
         if (d.depth === 0) {
-          y = 0
+          d.y = 0
         } else {
-          y = 50 + (d.depth - 1) * 20
+          // 每个节点与父节点相距 30px
+          // 如果同一级下有个既有`规则节点`也有`逻辑节点`，则增加逻辑节点的水平位移，防止文字重叠
+          let isLogicNodeSiblingsText = false
+          if (d.data.condition) {
+            isLogicNodeSiblingsText = d.parent.children.some(node => node.data.id !== d.data.id && !node.data.condition)
+          }
+          d.y = d.parent.y + 30
+          if (isLogicNodeSiblingsText) {
+            d.y = d.y + maxTextLength * 12
+          }
         }
-        d.y = y
       })
 
       nodes.forEach((d, i) => {

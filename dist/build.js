@@ -305,10 +305,11 @@ function squarifyRatio(ratio, parent, x0, y0, x1, y1) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Node__ = __webpack_require__(13);
-/* harmony export (immutable) */ __webpack_exports__["a"] = select;
-/* harmony export (immutable) */ __webpack_exports__["d"] = create;
-/* harmony export (immutable) */ __webpack_exports__["b"] = clone;
-/* harmony export (immutable) */ __webpack_exports__["c"] = merge;
+/* harmony export (immutable) */ __webpack_exports__["b"] = select;
+/* harmony export (immutable) */ __webpack_exports__["e"] = create;
+/* harmony export (immutable) */ __webpack_exports__["c"] = clone;
+/* harmony export (immutable) */ __webpack_exports__["d"] = merge;
+/* harmony export (immutable) */ __webpack_exports__["a"] = traverse;
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 
@@ -341,6 +342,15 @@ function merge(obj1, obj2) {
     } else {
       obj1[prop] = obj2[prop];
     }
+  }
+}
+
+function traverse(root, fn) {
+  fn(root);
+  if (root.rules) {
+    root.rules.forEach(function (rule) {
+      return traverse(rule, fn);
+    });
   }
 }
 
@@ -712,6 +722,17 @@ function getNodeText(data) {
           canvas = this.$refs.canvas,
           textFormatter = this.textFormatter;
 
+      var rulesCount = 0;
+      var maxTextLength = 0;
+      var index = 0;
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* traverse */])(data, function (d) {
+        d.id = index++;
+        if (!d.condition) {
+          rulesCount++;
+          maxTextLength = Math.max(maxTextLength, textFormatter(d).length);
+        }
+      });
+
       width = parseInt(width) - __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].left - __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].right;
       height = parseInt(height) - __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].top - __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].bottom;
 
@@ -722,26 +743,35 @@ function getNodeText(data) {
       var nodes = treeData.descendants();
       var links = treeData.links();
 
-      var container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* select */])(canvas).attr('width', width + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].left + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].right).attr('height', height + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].top + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].bottom).select('g');
+      var container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* select */])(canvas).attr('width', width + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].left + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].right).attr('height', height + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].top + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].bottom).select('g');
 
       // 如果之前不存在容器，则新建一个，否则将容器内所有子元素清空
       if (container.empty()) {
-        container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* select */])(canvas).append('g').attr('transform', 'translate(' + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].left + ', ' + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].top + ')');
+        container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* select */])(canvas).append('g').attr('transform', 'translate(' + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].left + ', ' + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].top + ')');
       } else {
         container._node.innerHTML = '';
       }
 
-      var finalOption = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* clone */])(__WEBPACK_IMPORTED_MODULE_2__constants__["c" /* DEFAULT_OPTION */]);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* merge */])(finalOption, this.option);
+      var finalOption = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* clone */])(__WEBPACK_IMPORTED_MODULE_2__constants__["c" /* DEFAULT_OPTION */]);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["d" /* merge */])(finalOption, this.option);
       // 设置每个节点的水平坐标
       nodes.forEach(function (d) {
-        var y = void 0;
         if (d.depth === 0) {
-          y = 0;
+          d.y = 0;
         } else {
-          y = 50 + (d.depth - 1) * 20;
+          // 每个节点与父节点相距 30px
+          // 如果同一级下有个既有`规则节点`也有`逻辑节点`，则增加逻辑节点的水平位移，防止文字重叠
+          var isLogicNodeSiblingsText = false;
+          if (d.data.condition) {
+            isLogicNodeSiblingsText = d.parent.children.some(function (node) {
+              return node.data.id !== d.data.id && !node.data.condition;
+            });
+          }
+          d.y = d.parent.y + 30;
+          if (isLogicNodeSiblingsText) {
+            d.y = d.y + maxTextLength * 12;
+          }
         }
-        d.y = y;
       });
 
       nodes.forEach(function (d, i) {
@@ -904,19 +934,19 @@ var Node = function () {
   }, {
     key: 'select',
     value: function select(selector) {
-      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["a" /* select */])(selector, this._node);
+      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["b" /* select */])(selector, this._node);
     }
   }, {
     key: 'append',
     value: function append(selector) {
-      var _childNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["d" /* create */])(selector);
+      var _childNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["e" /* create */])(selector);
       this._node.appendChild(_childNode);
       return new Node(_childNode);
     }
   }, {
     key: 'insert',
     value: function insert(selector, _nodeBefore) {
-      var _insertedNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["d" /* create */])(selector);
+      var _insertedNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["e" /* create */])(selector);
       _nodeBefore = typeof _nodeBefore === 'string' ? this.select(_nodeBefore, this._node)._node : _nodeBefore;
       this._node.insertBefore(_insertedNode, _nodeBefore);
       return new Node(_insertedNode);

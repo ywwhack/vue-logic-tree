@@ -28,3 +28,10 @@ export function merge (obj1, obj2) {
     }
   }
 }
+
+export function traverse (root, fn) {
+  fn(root)
+  if (root.rules) {
+    root.rules.forEach(rule => traverse(rule, fn))
+  }
+}
