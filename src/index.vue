@@ -54,7 +54,10 @@ export default {
   watch: {
     width: 'update',
     height: 'update',
-    data: 'update'
+    data: {
+      handler: 'update',
+      deep: true
+    }
   },
 
   methods: {
