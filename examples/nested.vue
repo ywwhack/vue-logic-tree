@@ -1,5 +1,5 @@
 <template>
-  <logic-tree :data="logicTreeData" height="300" width="1000"></logic-tree>
+  <logic-tree :data="logicTreeData" width="500" height="500"></logic-tree>
 </template>
 
 <script>

@@ -774,6 +774,11 @@ function getNodeText(data) {
         }
       });
 
+      // 设置viewBox
+      // TODO: 找个更好的方式替换掉这个黑魔法 =。=
+      var viewBoxWidth = nodes[nodes.length - 1].y + maxTextLength * 12 + 12;
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* select */])(canvas).attr('viewBox', '0 0 ' + viewBoxWidth + ' ' + height).attr('preserveAspectRatio', 'xMinYMin meet');
+
       nodes.forEach(function (d, i) {
         var data = d.data,
             x = d.x,

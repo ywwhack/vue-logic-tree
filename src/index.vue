@@ -116,6 +116,13 @@ export default {
         }
       })
 
+      // 设置viewBox
+      // TODO: 找个更好的方式替换掉这个黑魔法 =。=
+      const viewBoxWidth = nodes[nodes.length - 1].y + maxTextLength * 12 + 12
+      select(canvas)
+        .attr('viewBox', `0 0 ${viewBoxWidth} ${height}`)
+        .attr('preserveAspectRatio', 'xMinYMin meet')
+
       nodes.forEach((d, i) => {
         const { data, x, y } = d
         const isLogicNode = !!data.condition
