@@ -1,7 +1,3 @@
-export const NODE_TYPE = {
-  logic: 'logic',
-  text: 'text'
-}
 export const DEFAULT_OPTION = {
     logicCircle: {
       r: 12,
@@ -26,4 +22,8 @@ export const MARGIN = {
   right: 0,
   bottom: 0,
   left: 14
+}
+export const LOGIC_TYPE = {
+  AND: { name: '且', value: 'AND' },
+  OR: { name: '或', value: 'OR' }
 }

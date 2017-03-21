@@ -7,7 +7,7 @@ import LogicTree from '../'
 import logicTreeData from './data.json'
 
 export default {
-  name: 'custom',
+  name: 'custom-style',
 
   components: {
     LogicTree

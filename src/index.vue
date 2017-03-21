@@ -5,7 +5,23 @@
 <script>
 import { tree, hierarchy } from 'd3-hierarchy'
 import { select, clone, merge } from './util'
-import { NODE_TYPE, DEFAULT_OPTION, MARGIN } from './constants'
+import { DEFAULT_OPTION, MARGIN, LOGIC_TYPE } from './constants'
+import OPERATORS from './operators'
+
+function getNodeText (data) {
+  const { condition } = data
+  if (condition) { // 节点是一个逻辑值
+    const { AND, OR } = LOGIC_TYPE
+    switch (condition) {
+      case AND.value: return AND.name
+      case OR.value: return OR.name
+    }
+  } else { // 节点是普通规则
+    const { field, type, operator, value } = data
+    const operatorText = OPERATORS[type][operator]
+    return `${field}${operatorText}${value}`
+  }
+}
 
 export default {
   name: 'logic-tree',
@@ -28,6 +44,10 @@ export default {
       default () {
         return {}
       }
+    },
+    textFormatter: {
+      type: Function,
+      default: getNodeText
     }
   },
 
@@ -39,11 +59,11 @@ export default {
 
   methods: {
     update () {
-      let { width, height, data, $refs: { canvas } } = this
+      let { width, height, data, $refs: { canvas }, textFormatter } = this
       width = parseInt(width) - MARGIN.left - MARGIN.right
       height = parseInt(height) - MARGIN.top - MARGIN.bottom
 
-      const root = hierarchy(data)
+      const root = hierarchy(data, d => d.rules)
       const treeData = tree().size([height, width])(root)
       const nodes = treeData.descendants()
       const links = treeData.links()
@@ -76,13 +96,14 @@ export default {
       })
 
       nodes.forEach((d, i) => {
-        const { data: { type, name }, x, y } = d
+        const { data, x, y } = d
+        const isLogicNode = !!data.condition
 
         const treeNode = container.append('g')
           .attr('transform', `translate(${y}, ${x})`)
 
         // 如果类型是 logic, 则画一个圆
-        if (type === NODE_TYPE.logic) {
+        if (isLogicNode) {
           treeNode.append('circle')
             .style('fill', '#fff')
             .styles(finalOption.logicCircle)
@@ -90,11 +111,11 @@ export default {
 
         // 节点文字内容
         const text = treeNode.append('text')
-          .attr('x', type === NODE_TYPE.logic ? 0 : 10)
+          .attr('x', isLogicNode ? 0 : 10)
           .attr('dy', '.35em')
-          .attr('text-anchor', type === NODE_TYPE.logic ? 'middle' : 'start')
-          .text(name)
-        if (type === NODE_TYPE.logic) {
+          .attr('text-anchor', isLogicNode ? 'middle' : 'start')
+          .text(textFormatter(data))
+        if (isLogicNode) {
           text.styles(finalOption.logicText)
         } else {
           text.styles(finalOption.ruleText)

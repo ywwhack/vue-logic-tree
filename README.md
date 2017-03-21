@@ -10,6 +10,33 @@
 npm i vue-logic-tree
 ```
 
+## Props
+
+属性 | 类型 | 默认值 | 描述
+---- | ---- | ---- |----
+width | Number | 250 | 容器宽度
+height | Number | 250 | 容器高度
+data | Object | - | 数据对象
+option | Object | - | 用于自定义样式
+text-formatter | Function | - | 用于自定义文本内容
+
+## tree-data的结构
+
+每个树的结构要求如下:
+
+```
+{
+	// 节点为逻辑符号时存在以下字段
+	condition 逻辑类型
+	rules 规则数组
+	
+	// 如果节点为规则，则存在以下字段
+	field 字段名称
+	operator 比较运算符
+	value 字段值
+}
+```
+
 ## 基本用法
 
 ```
@@ -19,26 +46,24 @@ npm i vue-logic-tree
 
 <script>
 const logicTreeData = {
-  "type": "logic",
-  "name": "或",
-  "children": [
+  "condition": "OR",
+  "rules": [
     {
-      "type": "logic",
-      "name": "且",
-      "children": [
-        { "type": "text", "name": "用户主动" },
-        { "type": "text", "name": "主动无效" },
-        { "type": "text", "name": "商家主动无效" },
-        { "type": "text", "name": "主动无效订单" }
+      "condition": "AND",
+      "rules": [
+        { "type": "number", "field": "用户主动无效订单数", "operator": ">", "value": "10" },
+        { "type": "number", "field": "主动无效订单数", "operator": "=", "value": "10" },
+        { "type": "number", "field": "商家主动无效订单数", "operator": "<", "value": "10" },
+        { "type": "number", "field": "主动无效订单数", "operator": "=", "value": "20" }
       ]
     },
     {
-      "type": "logic",
-      "name": "且",
-      "children": [
-        { "type": "text", "name": "用户主动" },
-        { "type": "text", "name": "主动无效" },
-        { "type": "text", "name": "商家主动无效" }
+      "condition": "AND",
+      "rules": [
+        { "type": "number", "field": "用户主动无效订单数", "operator": ">", "value": "10" },
+        { "type": "number", "field": "主动无效订单数", "operator": "=", "value": "10" },
+        { "type": "number", "field": "商家主动无效订单数", "operator": "<", "value": "10" },
+        { "type": "number", "field": "主动无效订单数", "operator": "=", "value": "20" }
       ]
     }
   ]
@@ -58,28 +83,9 @@ export default {
 </script>
 ```
 
-## tree-data的结构
-
-每个树的结构要求如下:
-
-```
-{
-	// 规定节点显示逻辑符号还是具体规则
-	// logic 显示逻辑符号
-	// text 显示规则
-	type: 'logic' | 'text',
-	
-	// 节点的文字内容
-	name: String,
-	
-	// 子节点数组，可为空
-	children: Array(Optional)
-}
-```
-
 ## 自定义节点样式
 
-通过`option`这个props自定义节点样式，具体规则如下：
+通过 `option` 这个props自定义节点 `style` ，具体规则如下：
 
 ```
 {
@@ -126,7 +132,7 @@ const logicTreeData = {
 
 
 export default {
-  name: 'custom',
+  name: 'custom-style',
 
   components: {
     LogicTree
@@ -148,6 +154,57 @@ export default {
         'stroke-width': 2
       }
     }
+  }
+}
+</script>
+```
+
+## 自定义节点显示文本
+
+通过 `text-formatter` 属性向组件传递一个函数，参数是传入的数据对象 `{ condition: xxx, rules: [xxx] }` ，如果定义了该函数，则使用该函数的返回值作为每个文本的值
+
+```
+<template>
+  <logic-tree :data="logicTreeData" :text-formatter="d => d.condition || d.field"></logic-tree>
+</template>
+
+<script>
+const logicTreeData = {
+  "type": "logic",
+  "name": "或",
+  "children": [
+    {
+      "type": "logic",
+      "name": "且",
+      "children": [
+        { "type": "text", "name": "用户主动" },
+        { "type": "text", "name": "主动无效" },
+        { "type": "text", "name": "商家主动无效" },
+        { "type": "text", "name": "主动无效订单" }
+      ]
+    },
+    {
+      "type": "logic",
+      "name": "且",
+      "children": [
+        { "type": "text", "name": "用户主动" },
+        { "type": "text", "name": "主动无效" },
+        { "type": "text", "name": "商家主动无效" }
+      ]
+    }
+  ]
+}
+
+
+export default {
+  name: 'custom-text',
+
+  components: {
+    LogicTree
+  },
+
+  created() {
+    this.logicTreeData = logicTreeData
   }
 }
 </script>

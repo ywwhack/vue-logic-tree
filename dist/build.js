@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 37);
+/******/ 	return __webpack_require__(__webpack_require__.s = 38);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -127,17 +127,17 @@ function required(f) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__count__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__each__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__eachBefore__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__eachAfter__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sum__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sort__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__path__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ancestors__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__descendants__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__leaves__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__links__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__count__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__each__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__eachBefore__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__eachAfter__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__sum__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__sort__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__path__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ancestors__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__descendants__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__leaves__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__links__ = __webpack_require__(25);
 /* harmony export (immutable) */ __webpack_exports__["a"] = hierarchy;
 /* harmony export (immutable) */ __webpack_exports__["c"] = computeHeight;
 /* harmony export (immutable) */ __webpack_exports__["b"] = Node;
@@ -366,7 +366,7 @@ function constantZero() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shuffle__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shuffle__ = __webpack_require__(30);
 
 
 /* harmony default export */ __webpack_exports__["a"] = function(circles) {
@@ -627,9 +627,10 @@ function packEnclose(circles) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_d3_hierarchy__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_d3_hierarchy__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__constants__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__operators__ = __webpack_require__(15);
 //
 //
 //
@@ -638,6 +639,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
+
+
+function getNodeText(data) {
+  var condition = data.condition;
+
+  if (condition) {
+    // 节点是一个逻辑值
+    var AND = __WEBPACK_IMPORTED_MODULE_2__constants__["a" /* LOGIC_TYPE */].AND,
+        OR = __WEBPACK_IMPORTED_MODULE_2__constants__["a" /* LOGIC_TYPE */].OR;
+
+    switch (condition) {
+      case AND.value:
+        return AND.name;
+      case OR.value:
+        return OR.name;
+    }
+  } else {
+    // 节点是普通规则
+    var field = data.field,
+        type = data.type,
+        operator = data.operator,
+        value = data.value;
+
+    var operatorText = __WEBPACK_IMPORTED_MODULE_3__operators__["a" /* default */][type][operator];
+    return '' + field + operatorText + value;
+  }
+}
 
 /* harmony default export */ __webpack_exports__["default"] = {
   name: 'logic-tree',
@@ -660,6 +688,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       default: function _default() {
         return {};
       }
+    },
+    textFormatter: {
+      type: Function,
+      default: getNodeText
     }
   },
 
@@ -674,26 +706,29 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       var width = this.width,
           height = this.height,
           data = this.data,
-          canvas = this.$refs.canvas;
+          canvas = this.$refs.canvas,
+          textFormatter = this.textFormatter;
 
-      width = parseInt(width) - __WEBPACK_IMPORTED_MODULE_2__constants__["a" /* MARGIN */].left - __WEBPACK_IMPORTED_MODULE_2__constants__["a" /* MARGIN */].right;
-      height = parseInt(height) - __WEBPACK_IMPORTED_MODULE_2__constants__["a" /* MARGIN */].top - __WEBPACK_IMPORTED_MODULE_2__constants__["a" /* MARGIN */].bottom;
+      width = parseInt(width) - __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].left - __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].right;
+      height = parseInt(height) - __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].top - __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].bottom;
 
-      var root = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_d3_hierarchy__["a" /* hierarchy */])(data);
+      var root = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_d3_hierarchy__["a" /* hierarchy */])(data, function (d) {
+        return d.rules;
+      });
       var treeData = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_d3_hierarchy__["b" /* tree */])().size([height, width])(root);
       var nodes = treeData.descendants();
       var links = treeData.links();
 
-      var container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* select */])(canvas).attr('width', width + __WEBPACK_IMPORTED_MODULE_2__constants__["a" /* MARGIN */].left + __WEBPACK_IMPORTED_MODULE_2__constants__["a" /* MARGIN */].right).attr('height', height + __WEBPACK_IMPORTED_MODULE_2__constants__["a" /* MARGIN */].top + __WEBPACK_IMPORTED_MODULE_2__constants__["a" /* MARGIN */].bottom).select('g');
+      var container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* select */])(canvas).attr('width', width + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].left + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].right).attr('height', height + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].top + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].bottom).select('g');
 
       // 如果之前不存在容器，则新建一个，否则将容器内所有子元素清空
       if (container.empty()) {
-        container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* select */])(canvas).append('g').attr('transform', 'translate(' + __WEBPACK_IMPORTED_MODULE_2__constants__["a" /* MARGIN */].left + ', ' + __WEBPACK_IMPORTED_MODULE_2__constants__["a" /* MARGIN */].top + ')');
+        container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* select */])(canvas).append('g').attr('transform', 'translate(' + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].left + ', ' + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].top + ')');
       } else {
         container._node.innerHTML = '';
       }
 
-      var finalOption = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* clone */])(__WEBPACK_IMPORTED_MODULE_2__constants__["b" /* DEFAULT_OPTION */]);
+      var finalOption = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* clone */])(__WEBPACK_IMPORTED_MODULE_2__constants__["c" /* DEFAULT_OPTION */]);
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* merge */])(finalOption, this.option);
       // 设置每个节点的水平坐标
       nodes.forEach(function (d) {
@@ -707,23 +742,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       });
 
       nodes.forEach(function (d, i) {
-        var _d$data = d.data,
-            type = _d$data.type,
-            name = _d$data.name,
+        var data = d.data,
             x = d.x,
             y = d.y;
 
+        var isLogicNode = !!data.condition;
 
         var treeNode = container.append('g').attr('transform', 'translate(' + y + ', ' + x + ')');
 
         // 如果类型是 logic, 则画一个圆
-        if (type === __WEBPACK_IMPORTED_MODULE_2__constants__["c" /* NODE_TYPE */].logic) {
+        if (isLogicNode) {
           treeNode.append('circle').style('fill', '#fff').styles(finalOption.logicCircle);
         }
 
         // 节点文字内容
-        var text = treeNode.append('text').attr('x', type === __WEBPACK_IMPORTED_MODULE_2__constants__["c" /* NODE_TYPE */].logic ? 0 : 10).attr('dy', '.35em').attr('text-anchor', type === __WEBPACK_IMPORTED_MODULE_2__constants__["c" /* NODE_TYPE */].logic ? 'middle' : 'start').text(name);
-        if (type === __WEBPACK_IMPORTED_MODULE_2__constants__["c" /* NODE_TYPE */].logic) {
+        var text = treeNode.append('text').attr('x', isLogicNode ? 0 : 10).attr('dy', '.35em').attr('text-anchor', isLogicNode ? 'middle' : 'start').text(textFormatter(data));
+        if (isLogicNode) {
           text.styles(finalOption.logicText);
         } else {
           text.styles(finalOption.ruleText);
@@ -901,13 +935,9 @@ var Node = function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return NODE_TYPE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return DEFAULT_OPTION; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MARGIN; });
-var NODE_TYPE = {
-  logic: 'logic',
-  text: 'text'
-};
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return DEFAULT_OPTION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return MARGIN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LOGIC_TYPE; });
 var DEFAULT_OPTION = {
   logicCircle: {
     r: 12,
@@ -933,41 +963,88 @@ var MARGIN = {
   bottom: 0,
   left: 14
 };
+var LOGIC_TYPE = {
+  AND: { name: '且', value: 'AND' },
+  OR: { name: '或', value: 'OR' }
+};
 
 /***/ }),
 /* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_cluster__ = __webpack_require__(16);
+/* harmony default export */ __webpack_exports__["a"] = {
+  date: {
+    '=': '等于',
+    '<>': '不等于',
+    '<=': '当日或之前',
+    '>=': '当日或之后',
+    'is null': '为空',
+    'is not null': '不为空'
+  },
+  enum: {
+    'in': '属于',
+    'not in': '不属于',
+    'is null': '为空',
+    'is not null': '不为空'
+  },
+  map: {
+    'in': '位于'
+  },
+  number: {
+    '=': '等于',
+    '<>': '不等于',
+    '>': '大于',
+    '>=': '大于等于',
+    '<': '小于',
+    '<=': '小于等于',
+    'is null': '为空',
+    'is not null': '不为空'
+  },
+  text: {
+    '=': '等于',
+    '<>': '不等于',
+    'in': '包括',
+    'not in': '不包括',
+    'is null': '为空',
+    'is not null': '不为空'
+  }
+};
+
+/***/ }),
+/* 16 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_cluster__ = __webpack_require__(17);
 /* unused harmony reexport cluster */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__src_hierarchy_index__ = __webpack_require__(3);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return __WEBPACK_IMPORTED_MODULE_1__src_hierarchy_index__["a"]; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_pack_index__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__src_pack_index__ = __webpack_require__(29);
 /* unused harmony reexport pack */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_pack_siblings__ = __webpack_require__(8);
 /* unused harmony reexport packSiblings */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__src_pack_enclose__ = __webpack_require__(7);
 /* unused harmony reexport packEnclose */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_partition__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__src_partition__ = __webpack_require__(31);
 /* unused harmony reexport partition */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_stratify__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__src_stratify__ = __webpack_require__(32);
 /* unused harmony reexport stratify */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_tree__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_tree__ = __webpack_require__(33);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __WEBPACK_IMPORTED_MODULE_7__src_tree__["a"]; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_treemap_index__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__src_treemap_index__ = __webpack_require__(35);
 /* unused harmony reexport treemap */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_treemap_binary__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__src_treemap_binary__ = __webpack_require__(34);
 /* unused harmony reexport treemapBinary */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__src_treemap_dice__ = __webpack_require__(0);
 /* unused harmony reexport treemapDice */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__src_treemap_slice__ = __webpack_require__(1);
 /* unused harmony reexport treemapSlice */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_treemap_sliceDice__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_treemap_sliceDice__ = __webpack_require__(37);
 /* unused harmony reexport treemapSliceDice */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__src_treemap_squarify__ = __webpack_require__(4);
 /* unused harmony reexport treemapSquarify */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__src_treemap_resquarify__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__src_treemap_resquarify__ = __webpack_require__(36);
 /* unused harmony reexport treemapResquarify */
 
 
@@ -987,7 +1064,7 @@ var MARGIN = {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1078,7 +1155,7 @@ function leafRight(node) {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1092,7 +1169,7 @@ function leafRight(node) {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1111,7 +1188,7 @@ function count(node) {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1125,7 +1202,7 @@ function count(node) {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1145,7 +1222,7 @@ function count(node) {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1165,7 +1242,7 @@ function count(node) {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1182,7 +1259,7 @@ function count(node) {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1198,7 +1275,7 @@ function count(node) {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1214,7 +1291,7 @@ function count(node) {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1251,7 +1328,7 @@ function leastCommonAncestor(a, b) {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1265,7 +1342,7 @@ function leastCommonAncestor(a, b) {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1281,7 +1358,7 @@ function leastCommonAncestor(a, b) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1370,7 +1447,7 @@ function translateChild(k) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1400,7 +1477,7 @@ function Node(value) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1461,7 +1538,7 @@ function Node(value) {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1543,7 +1620,7 @@ function defaultParentId(d) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1788,7 +1865,7 @@ function treeRoot(root) {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1841,7 +1918,7 @@ function treeRoot(root) {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1946,7 +2023,7 @@ function treeRoot(root) {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1992,7 +2069,7 @@ function treeRoot(root) {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2007,7 +2084,7 @@ function treeRoot(root) {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Component = __webpack_require__(11)(
