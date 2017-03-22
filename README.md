@@ -31,6 +31,7 @@ text-formatter | Function | - | 用于自定义文本内容
 	rules 规则数组
 	
 	// 如果节点为规则，则存在以下字段
+	type 字段类型（Number | Text | ...）
 	field 字段名称
 	operator 比较运算符
 	value 字段值
