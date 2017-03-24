@@ -35,3 +35,7 @@ export function traverse (root, fn) {
     root.rules.forEach(rule => traverse(rule, fn))
   }
 }
+
+export function isEmpty (obj) {
+  return Object.keys(obj).length === 0
+}

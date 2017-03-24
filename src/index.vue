@@ -4,7 +4,7 @@
 
 <script>
 import { tree, hierarchy } from 'd3-hierarchy'
-import { select, clone, merge, traverse } from './util'
+import { select, clone, merge, traverse, isEmpty } from './util'
 import { DEFAULT_OPTION, MARGIN, LOGIC_TYPE } from './constants'
 import OPERATORS from './operators'
 
@@ -63,11 +63,13 @@ export default {
   methods: {
     update () {
       let { width, height, data, $refs: { canvas }, textFormatter } = this
+
+      if (isEmpty(data)) return
+
       let rulesCount = 0
       let maxTextLength = 0
       let index = 0
       traverse(data, d => {
-        d.id = index++
         if (!d.condition) {
           rulesCount++
           maxTextLength = Math.max(maxTextLength, textFormatter(d).length)

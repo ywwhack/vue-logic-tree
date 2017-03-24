@@ -305,11 +305,12 @@ function squarifyRatio(ratio, parent, x0, y0, x1, y1) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Node__ = __webpack_require__(13);
-/* harmony export (immutable) */ __webpack_exports__["b"] = select;
-/* harmony export (immutable) */ __webpack_exports__["e"] = create;
-/* harmony export (immutable) */ __webpack_exports__["c"] = clone;
-/* harmony export (immutable) */ __webpack_exports__["d"] = merge;
-/* harmony export (immutable) */ __webpack_exports__["a"] = traverse;
+/* harmony export (immutable) */ __webpack_exports__["c"] = select;
+/* harmony export (immutable) */ __webpack_exports__["f"] = create;
+/* harmony export (immutable) */ __webpack_exports__["d"] = clone;
+/* harmony export (immutable) */ __webpack_exports__["e"] = merge;
+/* harmony export (immutable) */ __webpack_exports__["b"] = traverse;
+/* harmony export (immutable) */ __webpack_exports__["a"] = isEmpty;
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 
@@ -352,6 +353,10 @@ function traverse(root, fn) {
       return traverse(rule, fn);
     });
   }
+}
+
+function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
 }
 
 /***/ }),
@@ -722,11 +727,13 @@ function getNodeText(data) {
           canvas = this.$refs.canvas,
           textFormatter = this.textFormatter;
 
+
+      if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* isEmpty */])(data)) return;
+
       var rulesCount = 0;
       var maxTextLength = 0;
       var index = 0;
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* traverse */])(data, function (d) {
-        d.id = index++;
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* traverse */])(data, function (d) {
         if (!d.condition) {
           rulesCount++;
           maxTextLength = Math.max(maxTextLength, textFormatter(d).length);
@@ -743,17 +750,17 @@ function getNodeText(data) {
       var nodes = treeData.descendants();
       var links = treeData.links();
 
-      var container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* select */])(canvas).attr('width', width + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].left + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].right).attr('height', height + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].top + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].bottom).select('g');
+      var container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* select */])(canvas).attr('width', width + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].left + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].right).attr('height', height + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].top + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].bottom).select('g');
 
       // 如果之前不存在容器，则新建一个，否则将容器内所有子元素清空
       if (container.empty()) {
-        container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* select */])(canvas).append('g').attr('transform', 'translate(' + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].left + ', ' + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].top + ')');
+        container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* select */])(canvas).append('g').attr('transform', 'translate(' + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].left + ', ' + __WEBPACK_IMPORTED_MODULE_2__constants__["b" /* MARGIN */].top + ')');
       } else {
         container._node.innerHTML = '';
       }
 
-      var finalOption = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* clone */])(__WEBPACK_IMPORTED_MODULE_2__constants__["c" /* DEFAULT_OPTION */]);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["d" /* merge */])(finalOption, this.option);
+      var finalOption = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["d" /* clone */])(__WEBPACK_IMPORTED_MODULE_2__constants__["c" /* DEFAULT_OPTION */]);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["e" /* merge */])(finalOption, this.option);
       // 设置每个节点的水平坐标
       nodes.forEach(function (d) {
         if (d.depth === 0) {
@@ -777,7 +784,7 @@ function getNodeText(data) {
       // 设置viewBox
       // TODO: 找个更好的方式替换掉这个黑魔法 =。=
       var viewBoxWidth = nodes[nodes.length - 1].y + maxTextLength * 12 + 12;
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* select */])(canvas).attr('viewBox', '0 0 ' + viewBoxWidth + ' ' + height).attr('preserveAspectRatio', 'xMinYMin meet');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* select */])(canvas).attr('viewBox', '0 0 ' + viewBoxWidth + ' ' + height).attr('preserveAspectRatio', 'xMinYMin meet');
 
       nodes.forEach(function (d, i) {
         var data = d.data,
@@ -939,19 +946,19 @@ var Node = function () {
   }, {
     key: 'select',
     value: function select(selector) {
-      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["b" /* select */])(selector, this._node);
+      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["c" /* select */])(selector, this._node);
     }
   }, {
     key: 'append',
     value: function append(selector) {
-      var _childNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["e" /* create */])(selector);
+      var _childNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["f" /* create */])(selector);
       this._node.appendChild(_childNode);
       return new Node(_childNode);
     }
   }, {
     key: 'insert',
     value: function insert(selector, _nodeBefore) {
-      var _insertedNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["e" /* create */])(selector);
+      var _insertedNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["f" /* create */])(selector);
       _nodeBefore = typeof _nodeBefore === 'string' ? this.select(_nodeBefore, this._node)._node : _nodeBefore;
       this._node.insertBefore(_insertedNode, _nodeBefore);
       return new Node(_insertedNode);
