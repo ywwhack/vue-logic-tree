@@ -64,7 +64,10 @@ export default {
     update () {
       let { width, height, data, $refs: { canvas }, textFormatter } = this
 
-      if (isEmpty(data)) return
+      if (isEmpty(data) || !data.condition || !data.rules) {
+        select(canvas)._node.innerHTML = ''
+        return
+      }
 
       let rulesCount = 0
       let maxTextLength = 0
