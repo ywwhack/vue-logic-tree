@@ -29,8 +29,8 @@ export default {
   text: {
     '=': '等于',
     '<>': '不等于',
-    'in': '包括',
-    'not in': '不包括',
+    'like': '包含',
+    'not like': '不包含',
     'is null': '为空',
     'is not null': '不为空'
   }
