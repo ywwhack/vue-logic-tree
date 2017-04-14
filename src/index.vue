@@ -8,7 +8,7 @@ import { select, clone, merge, traverse, isEmpty } from './util'
 import { DEFAULT_OPTION, MARGIN, LOGIC_TYPE } from './constants'
 import OPERATORS from './operators'
 
-function getNodeText (data) {
+function getNodeText (data, operators) {
   const { condition } = data
   if (condition) { // 节点是一个逻辑值
     const { AND, OR } = LOGIC_TYPE
@@ -18,7 +18,7 @@ function getNodeText (data) {
     }
   } else { // 节点是普通规则
     const { field, type, operator, value } = data
-    const operatorText = OPERATORS[type][operator]
+    const operatorText = operators[type][operator]
     return `${field}${operatorText}${value}`
   }
 }
@@ -48,7 +48,8 @@ export default {
     textFormatter: {
       type: Function,
       default: getNodeText
-    }
+    },
+    operators: Object
   },
 
   watch: {
@@ -62,7 +63,7 @@ export default {
 
   methods: {
     update () {
-      let { width, height, data, $refs: { canvas }, textFormatter } = this
+      let { width, height, data, $refs: { canvas }, textFormatter, operators = OPERATORS } = this
 
       if (isEmpty(data) || !data.condition || !data.rules) {
         select(canvas)._node.innerHTML = ''
@@ -75,7 +76,7 @@ export default {
       traverse(data, d => {
         if (!d.condition) {
           rulesCount++
-          maxTextLength = Math.max(maxTextLength, textFormatter(d).length)
+          maxTextLength = Math.max(maxTextLength, textFormatter(d, operators).length)
         }
       })
 
@@ -147,7 +148,7 @@ export default {
           .attr('x', isLogicNode ? 0 : 10)
           .attr('dy', '.35em')
           .attr('text-anchor', isLogicNode ? 'middle' : 'start')
-          .text(textFormatter(data))
+          .text(textFormatter(data, operators))
         if (isLogicNode) {
           text.styles(finalOption.logicText)
         } else {
