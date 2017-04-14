@@ -19,6 +19,7 @@ height | Number | 250 | 容器高度
 data | Object | - | 数据对象
 option | Object | - | 用于自定义样式
 text-formatter | Function | - | 用于自定义文本内容
+operators | Object | 参见 `src/operators.js` | operators 中英文对照表
 
 ## tree-data的结构
 
