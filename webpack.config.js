@@ -26,5 +26,12 @@ module.exports = {
         exclude: /node_modules/
       }
     ]
+  },
+  externals: {
+    'd3-hierarchy': {
+      commonjs: 'd3-hierarchy',
+      commonjs2: 'd3-hierarchy',
+      amd: 'd3-hierarchy'
+    }
   }
 }
