@@ -7,7 +7,7 @@
   "repository": "https://github.com/ywwhack/vue-logic-tree",
   "scripts": {
     "build": "webpack --progress --hide-modules",
-    "prepublishOnly": "npm run build",
+    "prepublish": "npm run build",
     "release": "np"
   },
   "dependencies": {
