@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import LogicTree from '../'
+import LogicTree from '../src'
 
 const LOGIC_TREE_DATA = {
   "condition": "OR",

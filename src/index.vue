@@ -113,7 +113,7 @@ export default {
           // 如果同一级下有个既有`规则节点`也有`逻辑节点`，则增加逻辑节点的水平位移，防止文字重叠
           let isLogicNodeSiblingsText = false
           if (d.data.condition) {
-            isLogicNodeSiblingsText = d.parent.children.some(node => node.data.id !== d.data.id && !node.data.condition)
+            isLogicNodeSiblingsText = d.parent.children.some(node => !node.data.condition)
           }
           d.y = d.parent.y + 30
           if (isLogicNodeSiblingsText) {
